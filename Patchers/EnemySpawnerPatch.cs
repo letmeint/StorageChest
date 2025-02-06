@@ -11,6 +11,11 @@ public class EnemySpawnerPatch
 {
     static GameObject chestPrefab;
 
+
+    //this was when I was going to make chests, before just going the Luna route.
+
+
+
     //[HarmonyPatch("Start")]
     public static void Prefix()
     {

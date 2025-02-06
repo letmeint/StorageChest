@@ -8,33 +8,38 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public static class LunasShopModified
+public class LunasShopModified : MonoBehaviour
 {
     //inventory storage for the player
-    public static GameObject playerItemsParentStorage = null;
+    public GameObject playerItemsParentStorage = null;
     //inventory storage that Luna is holding for the player
-    public static GameObject storageItemsParent = null;
+    public GameObject storageItemsParent = null;
 
-    static Dictionary<GameObject, bool> shopUI = new();
-    static List<GameObject> storageUI = new();
+    Dictionary<GameObject, bool> shopUI = new();
+    List<GameObject> storageUI = new();
 
-    static InventoryStorage inventoryStorage;
-    static Inventory playerInventory;
+    InventoryStorage inventoryStorage;
+    Inventory playerInventory;
 
-    static List<InventoryStorageSlot> storageSlots = new();
-    static List<InventoryStorageSlot> playerSlots = new();
+    List<InventoryStorageSlot> storageSlots = new();
+    List<InventoryStorageSlot> playerSlots = new();
 
-    static GameObject inventoryStorageSlotCache = null;
-    static GameObject inventorySlotReference = null;
+    GameObject inventoryStorageSlotCache = null;
+    GameObject inventorySlotReference = null;
 
-    static int slotCount = 40;
+    int slotCount = 40;
 
     public static Action<InventoryStorageSlot> OnTransferItem;
 
-    static bool isInit = false;
-    static List<GameObject> destroyList = new();
+    bool isInit = false;
+    List<GameObject> destroyList = new();
 
-    public static void Init()
+    private void Start()
+    {
+        Init();
+    }
+
+    public void Init()
     {
         playerInventory = Inventory.instance;
         inventoryStorage = GameObject.Find("Luna Stand").GetComponent<InventoryStorage>();
@@ -44,19 +49,29 @@ public static class LunasShopModified
         storageItemsParent = null;
         shopUI = new();
         storageUI = new();
-        storageSlots = new();
-        playerSlots = new();
         destroyList = new();
 
+        storageSlots = new();
+        playerSlots = new();
+
         SetupUI();
-        OnTransferItem += TransferItem;
+        
+
 
         isInit = true;
-
-        UpdateUI();
     }
 
-    public static void OpenStorage()
+    private void OnEnable()
+    {
+        OnTransferItem += TransferItem;
+    }
+
+    private void OnDisable()
+    {
+        OnTransferItem -= TransferItem;
+    }
+
+    public void OpenStorage()
     {
         Plugin.Logger.LogInfo("Open Storage.");
 
@@ -71,10 +86,11 @@ public static class LunasShopModified
             }
         }
 
-        inventoryStorage.LoadData();
+        //inventoryStorage.LoadData();
+        UpdateUI();
     }
 
-    private static void TransferItem(InventoryStorageSlot slot)
+    private void TransferItem(InventoryStorageSlot slot)
     {
         Plugin.Logger.LogWarning("TransferItem called.");
 
@@ -110,9 +126,9 @@ public static class LunasShopModified
         UpdateUI();
     }
 
-    private static void CloseShop()
+    private void CloseShop()
     {
-        InventoryStorage.instance.SaveData();
+        //InventoryStorage.instance.SaveData();
 
         storageUI.ForEach(go => go.SetActive(false));
         foreach (var obj in shopUI.Keys)
@@ -121,7 +137,7 @@ public static class LunasShopModified
         }
     }
 
-    public static void UpdateUI()
+    public void UpdateUI()
     {
         if (!isInit)
         {
@@ -156,7 +172,7 @@ public static class LunasShopModified
         }
     }
 
-    private static bool CheckNeedsInit()
+    private bool CheckNeedsInit()
     {
         bool result = playerItemsParentStorage == null || storageItemsParent == null;
         Plugin.Logger.LogInfo($"Check if needs re-init: {result}");
@@ -164,7 +180,7 @@ public static class LunasShopModified
     }
 
     #region UI setup
-    private static void SetupUI()
+    private void SetupUI()
     {
         GameObject UI = GetUIGameObject();
         if (UI == null)
@@ -175,7 +191,7 @@ public static class LunasShopModified
         SetupInventories(UI);
     }
 
-    private static GameObject GetUIGameObject()
+    private GameObject GetUIGameObject()
     {
         LunasShop shop = GameObject.FindObjectOfType<LunasShop>();
         if (shop == null)
@@ -203,16 +219,16 @@ public static class LunasShopModified
         return shopUI;
     }
 
-    private static void SetupInventories(GameObject shopUI)
+    private void SetupInventories(GameObject shopUIParam)
     {
-        var tableArea = shopUI.transform.GetChild(0);
+        var tableArea = shopUIParam.transform.GetChild(0);
 
         for (int i = 0; i < tableArea.childCount; i++)
         {
             var child = tableArea.GetChild(i);
             if (child.name == "Store Items Parent")
             {
-                LunasShopModified.shopUI.Add(child.gameObject, child.gameObject.activeSelf);
+                shopUI.Add(child.gameObject, child.gameObject.activeSelf);
                 child.gameObject.SetActive(false);
             }
             else if (child.name == "Player Items Parent")
@@ -229,8 +245,8 @@ public static class LunasShopModified
                 storageUI.Add(playerItemsParentStorage);
 
                 Plugin.Logger.LogInfo("Disabling old player inventory");
-                if (!LunasShopModified.shopUI.ContainsKey(child.gameObject))
-                    LunasShopModified.shopUI.Add(child.gameObject, child.gameObject.activeSelf);
+                if (!shopUI.ContainsKey(child.gameObject))
+                    shopUI.Add(child.gameObject, child.gameObject.activeSelf);
                 child.gameObject.SetActive(false);
 
                 Plugin.Logger.LogInfo("removing slots for player inventory. childCount: " + playerItemsParentStorage.transform.childCount);
@@ -285,7 +301,7 @@ public static class LunasShopModified
                 var text = child.GetComponentInChildren<TextMeshProUGUI>();
                 text.text = "Player";
             }
-            else if(child.name == "Buy Title Parent")
+            else if (child.name == "Buy Title Parent")
             {
                 var text = child.GetComponentInChildren<TextMeshProUGUI>();
                 text.text = "Storage";
@@ -293,7 +309,7 @@ public static class LunasShopModified
         }
     }
 
-    private static void SetupStorage()
+    private void SetupStorage()
     {
         Plugin.Logger.LogInfo($"Setting up storage");
         //copy of player inventory to make storage
@@ -335,7 +351,7 @@ public static class LunasShopModified
     #endregion
 
     #region utility methods
-    private static void MoveOutAndDestroy(Transform toDestroy)
+    private void MoveOutAndDestroy(Transform toDestroy)
     {
         //Destroy likes to take it's time, so we'll just move everything out of the way while it's doing its thing
         //plus we don't like to destroy things in the middle of a loop
@@ -343,7 +359,7 @@ public static class LunasShopModified
         destroyList.Add(toDestroy.gameObject);
     }
 
-    private static IEnumerator DestroyDelay()
+    private IEnumerator DestroyDelay()
     {
         while (destroyList.Count > 0)
         {

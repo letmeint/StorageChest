@@ -2,9 +2,7 @@
 using StorageChest.Data;
 using StorageChest.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 using static DialogueNode;
 
 namespace StorageChest.Patchers;
@@ -18,7 +16,8 @@ public class LunaPatch
     { 
         if(__instance.gameObject.GetComponent<InventoryStorage>() == null)
             __instance.gameObject.AddComponent(typeof(InventoryStorage));
-      
+
+
         if (Globals.newChoiceAdded) return;
 
         FieldInfo dialogueField = typeof(Luna).GetField("standardGreetings", BindingFlags.Instance | BindingFlags.NonPublic);

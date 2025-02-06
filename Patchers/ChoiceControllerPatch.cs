@@ -17,7 +17,14 @@ public class ChoiceControllerPatch
             __instance.button.enabled = true;
             __instance.gameObject.GetComponent<Button>().onClick.AddListener(__instance.EndDialogue);
             __instance.gameObject.GetComponent<Button>().onClick.AddListener(__instance.OpenLunasShop);
-            __instance.gameObject.GetComponent<Button>().onClick.AddListener(LunasShopModified.OpenStorage);
+            __instance.gameObject.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                LunasShopModified shopMod = UnityEngine.Object.FindObjectOfType<LunasShopModified>();
+                if (shopMod != null)
+                {
+                    shopMod.OpenStorage();
+                }
+            });
             return false;
         }
 

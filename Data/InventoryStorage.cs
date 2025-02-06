@@ -28,6 +28,11 @@ namespace StorageChest.Data
             }
         }
 
+        private void Start()
+        {
+            LoadData();
+        }
+
         public bool AddItem(Item item)
         {
             if (items.Count >= space)
@@ -82,7 +87,6 @@ namespace StorageChest.Data
                     }
                 }
             }
-            LunasShopModified.UpdateUI();
         }
 
         public void SaveData()

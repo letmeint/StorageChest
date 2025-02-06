@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using StorageChest.Data;
 using StorageChest.Helpers;
 
 namespace StorageChest;

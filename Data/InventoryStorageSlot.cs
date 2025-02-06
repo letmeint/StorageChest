@@ -31,10 +31,8 @@ public class InventoryStorageSlot : MonoBehaviour, IHoverable
 
     public void Init(Action<InventoryStorageSlot> onButtonClick, InventorySlotShop item, SlotType slotType)
     {
-        Plugin.Logger.LogInfo("Init slot");
         this.slotType = slotType;
         CreateChildren(onButtonClick, item);
-
     }
 
     private void CreateChildren(Action<InventoryStorageSlot> onButtonClick, InventorySlotShop oldSlot)

@@ -87,8 +87,6 @@ namespace StorageChest.Data
 
         public void SaveData()
         {
-            if (items?.Count == 0) return;
-
             Plugin.Logger.LogInfo("Saving InventoryStorage data.");
 
             JObject state = new JObject();

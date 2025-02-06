@@ -28,31 +28,6 @@ public class InventoryStorageSlot : MonoBehaviour, IHoverable
 
     public Item item;
 
-    #region old
-    //public void Init(InventorySlotShop slot = null)
-    //{
-    //    CreateChildren(slot);
-    //    //CreateItem(slot.item);
-    //}
-    //private void CreateChildren(InventorySlotShop slot)
-    //{
-    //    Button btn = this.GetComponentInChildren<Button>();
-    //    btn.onClick.RemoveAllListeners();
-    //    btn.onClick.AddListener(() => TransferItem());
-
-    //    #region old
-    //    //var itemButton = slot.transform.GetChild(0);
-
-    //    //var newButtonGO = GameObject.Instantiate(itemButton, transform);
-
-    //    //var button = newButtonGO.GetComponent<Button>();
-
-    //    //button.onClick.RemoveAllListeners();
-    //    //button.onClick.AddListener(() => TransferItem());
-    //    #endregion
-    //}
-    #endregion
-
     public void Init(Action<InventoryStorageSlot> onButtonClick, InventorySlotShop item, SlotType slotType)
     {
         this.slotType = slotType;

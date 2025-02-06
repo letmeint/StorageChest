@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public static class LunasShopModified
 {
@@ -35,11 +36,8 @@ public static class LunasShopModified
 
     public static void Init()
     {
-        Plugin.Logger.LogWarning($"Loading player");
         playerInventory = Inventory.instance;
-        Plugin.Logger.LogWarning($"Loading inv storage");
         inventoryStorage = GameObject.Find("Luna Stand").GetComponent<InventoryStorage>();
-        Plugin.Logger.LogWarning($"getting slot count");
         slotCount = inventoryStorage.space;
 
         playerItemsParentStorage = null;
@@ -49,8 +47,6 @@ public static class LunasShopModified
         storageSlots = new();
         playerSlots = new();
         destroyList = new();
-
-
 
         SetupUI();
         OnTransferItem += TransferItem;
@@ -281,6 +277,16 @@ public static class LunasShopModified
                     }
                 }
 
+            }
+            else if (child.name == "Sell Title Parent")
+            {
+                var text = child.GetComponentInChildren<TextMeshProUGUI>();
+                text.text = "Player";
+            }
+            else if(child.name == "Buy Title Parent")
+            {
+                var text = child.GetComponentInChildren<TextMeshProUGUI>();
+                text.text = "Storage";
             }
         }
     }

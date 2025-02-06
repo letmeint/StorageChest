@@ -25,11 +25,11 @@ public class ChoiceControllerPatch
                     shopMod.OpenStorage();
                 }
             });
-            return false;
+            return false; //do not run the rest of the method
         }
 
 
-        return true;
+        return true; //run the rest of the method
     }
 }
 

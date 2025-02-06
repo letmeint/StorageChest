@@ -27,6 +27,9 @@ public class LunasShopModified : MonoBehaviour
     GameObject inventoryStorageSlotCache = null;
     GameObject inventorySlotReference = null;
 
+    TextMeshProUGUI buyText = null;
+    TextMeshProUGUI sellText = null;
+
     int slotCount = 40;
 
     public static Action<InventoryStorageSlot> OnTransferItem;
@@ -47,6 +50,8 @@ public class LunasShopModified : MonoBehaviour
 
         playerItemsParentStorage = null;
         storageItemsParent = null;
+        buyText = null;
+        sellText = null;
         shopUI = new();
         storageUI = new();
         destroyList = new();
@@ -55,9 +60,9 @@ public class LunasShopModified : MonoBehaviour
         playerSlots = new();
 
         SetupUI();
-        
 
 
+        CloseShop();
         isInit = true;
     }
 
@@ -77,14 +82,14 @@ public class LunasShopModified : MonoBehaviour
 
         if (CheckNeedsInit())
             Init();
-        else
+
+        storageUI.ForEach(go => go.SetActive(true));
+        foreach (var obj in shopUI.Keys)
         {
-            storageUI.ForEach(go => go.SetActive(true));
-            foreach (var obj in shopUI.Keys)
-            {
-                obj.SetActive(false);
-            }
+            obj.SetActive(false);
         }
+        buyText.text = "Storage";
+        sellText.text = "Player";
 
         //inventoryStorage.LoadData();
         UpdateUI();
@@ -135,6 +140,8 @@ public class LunasShopModified : MonoBehaviour
         {
             obj.SetActive(shopUI[obj]);
         }
+        buyText.text = "Buy";
+        sellText.text = "Sell";
     }
 
     public void UpdateUI()
@@ -189,6 +196,8 @@ public class LunasShopModified : MonoBehaviour
             return;
         }
         SetupInventories(UI);
+
+        //create the sort button
     }
 
     private GameObject GetUIGameObject()
@@ -286,6 +295,7 @@ public class LunasShopModified : MonoBehaviour
                     var innerChild = child.GetChild(j);
                     if (innerChild.name == "Leave Button")
                     {
+                        CreateSortButton(innerChild.gameObject);
                         innerChild.GetComponent<Button>().onClick.AddListener(() =>
                         {
                             Plugin.Logger.LogInfo("Leave Button clicked.");
@@ -299,12 +309,17 @@ public class LunasShopModified : MonoBehaviour
             else if (child.name == "Sell Title Parent")
             {
                 var text = child.GetComponentInChildren<TextMeshProUGUI>();
-                text.text = "Player";
+                if (text != null)
+                    sellText = text;
+
+                //text.text = "Player";
             }
             else if (child.name == "Buy Title Parent")
             {
                 var text = child.GetComponentInChildren<TextMeshProUGUI>();
-                text.text = "Storage";
+                if (text != null)
+                    buyText = text;
+                //text.text = "Storage";
             }
         }
     }
@@ -348,9 +363,38 @@ public class LunasShopModified : MonoBehaviour
             storageSlots.Add(newSlot);
         }
     }
+
+    private void CreateSortButton(GameObject toCopy)
+    {
+        var newGO = Instantiate(toCopy, toCopy.transform.parent);
+
+        DestroyImmediate(newGO.GetComponent<Button>());
+        var newButton = newGO.AddComponent<Button>();
+
+        var rect = newGO.GetComponent<RectTransform>();
+        var text = newGO.GetComponentInChildren<TextMeshProUGUI>();
+
+        newButton.onClick.RemoveAllListeners();
+        newButton.onClick.AddListener(Sort);
+
+        text.text = "Sort";
+    }
     #endregion
 
     #region utility methods
+
+    private void Sort()
+    {
+        inventoryStorage.items.Sort((Item item1, Item item2) =>
+        {
+            var result = item1.rarity.CompareTo(item2.rarity);
+            if(result != 0) return result;
+
+            return item1.name.CompareTo(item2.name);
+
+        });
+        UpdateUI();
+    }
     private void MoveOutAndDestroy(Transform toDestroy)
     {
         //Destroy likes to take it's time, so we'll just move everything out of the way while it's doing its thing

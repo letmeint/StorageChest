@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using StorageChest;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -30,9 +31,10 @@ public class InventoryStorageSlot : MonoBehaviour, IHoverable
 
     public void Init(Action<InventoryStorageSlot> onButtonClick, InventorySlotShop item, SlotType slotType)
     {
+        Plugin.Logger.LogInfo("Init slot");
         this.slotType = slotType;
         CreateChildren(onButtonClick, item);
-        
+
     }
 
     private void CreateChildren(Action<InventoryStorageSlot> onButtonClick, InventorySlotShop oldSlot)
@@ -42,7 +44,9 @@ public class InventoryStorageSlot : MonoBehaviour, IHoverable
         {
             if (button.GetChild(i).name == "Icon")
             {
+                //Plugin.Logger.LogInfo("got the icon");
                 icon = button.GetChild(i).GetComponent<Image>();
+                //Plugin.Logger.LogInfo("the icon is " + icon == null);
             }
             else if (button.GetChild(i).name == "Rarity Shine")
             {
@@ -75,6 +79,7 @@ public class InventoryStorageSlot : MonoBehaviour, IHoverable
         {
             rarityShine.enabled = false;
         }
+
     }
 
     public void ClearSlot()

@@ -7,6 +7,6 @@ internal static class Globals
 {
     internal static string defaultGamePath = Path.Combine(Paths.PluginPath, "Mods");
     internal static string defaultStorageSavePath = Path.Combine(defaultGamePath, @"StorageSaves");
-
+    internal static bool newChoiceAdded = false;
 }
 

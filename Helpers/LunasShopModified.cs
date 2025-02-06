@@ -35,9 +35,22 @@ public static class LunasShopModified
 
     public static void Init()
     {
+        Plugin.Logger.LogWarning($"Loading player");
         playerInventory = Inventory.instance;
+        Plugin.Logger.LogWarning($"Loading inv storage");
         inventoryStorage = GameObject.Find("Luna Stand").GetComponent<InventoryStorage>();
+        Plugin.Logger.LogWarning($"getting slot count");
         slotCount = inventoryStorage.space;
+
+        playerItemsParentStorage = null;
+        storageItemsParent = null;
+        shopUI = new();
+        storageUI = new();
+        storageSlots = new();
+        playerSlots = new();
+        destroyList = new();
+
+
 
         SetupUI();
         OnTransferItem += TransferItem;
@@ -51,7 +64,7 @@ public static class LunasShopModified
     {
         Plugin.Logger.LogInfo("Open Storage.");
 
-        if (!isInit)
+        if (CheckNeedsInit())
             Init();
         else
         {
@@ -119,6 +132,7 @@ public static class LunasShopModified
         }
 
         Plugin.Logger.LogInfo("Update player inventory UI.");
+
         for (int i = 0; i < playerInventory.space; i++)
         {
             if (i < playerInventory.items.Count)
@@ -144,7 +158,12 @@ public static class LunasShopModified
         }
     }
 
-
+    private static bool CheckNeedsInit()
+    {
+        bool result = playerItemsParentStorage == null || storageItemsParent == null;
+        Plugin.Logger.LogInfo($"Check if needs re-init: {result}");
+        return result;
+    }
 
     #region UI setup
     private static void SetupUI()

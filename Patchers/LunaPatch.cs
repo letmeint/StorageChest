@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using StorageChest.Data;
+using StorageChest.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -14,8 +15,11 @@ public class LunaPatch
 
     [HarmonyPatch("Start")]
     public static void Prefix(Luna __instance)
-    {
-        var inventoryStorage = __instance.gameObject.AddComponent(typeof(InventoryStorage));
+    { 
+        if(__instance.gameObject.GetComponent<InventoryStorage>() == null)
+            __instance.gameObject.AddComponent(typeof(InventoryStorage));
+      
+        if (Globals.newChoiceAdded) return;
 
         FieldInfo dialogueField = typeof(Luna).GetField("standardGreetings", BindingFlags.Instance | BindingFlags.NonPublic);
         if (dialogueField == null)
@@ -57,6 +61,8 @@ public class LunaPatch
 
         targetNode.choices = newChoices;
         Plugin.Logger.LogInfo("New choice successfully added to the first dialogue node.");
+
+        Globals.newChoiceAdded = true;
     }
 }
 

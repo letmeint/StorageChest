@@ -112,6 +112,8 @@ public static class LunasShopModified
 
     private static void CloseShop()
     {
+        InventoryStorage.instance.SaveData();
+
         storageUI.ForEach(go => go.SetActive(false));
         foreach (var obj in shopUI.Keys)
         {
